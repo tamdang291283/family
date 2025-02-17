@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Activity</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .carousel, .content {
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            position: relative;
+        }
+        .carousel-container, .content-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-container img, .content-container img {
+            width: 50%; /* Carousel shows 2 images at a time */
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .prev {
+            left: 0;
+        }
+        .next {
+            right: 0;
+        }
+        .show-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+    </style>
+  
+</head>
+<body>
+ 
+<header class="carousel">
+    <div class="carousel-container" id="carouselContainer">
+        <!-- Carousel images will be loaded here -->
+    </div>
+    <button class="prev" onclick="changeCarouselSlide(-1)">&#10094;</button>
+    <button class="next" onclick="changeCarouselSlide(1)">&#10095;</button>
+</header>
+
+<div class="content">
+    <h2>Family Activity</h2>
+    <div class="content-container" id="contentContainer">
+        <!-- Content images will be loaded here -->
+    </div>
+    <div class="show-more" onclick="loadMorePhotos()">Show More</div>
+</div>
+
+<div class="popup" id="popup">
+    <img id="popupImage" src="" alt="">
+</div>
+
+<script>
+    let carouselData = [
+            {
+                "photoPath": "https://drive.google.com/file/d/1BqLMu98W0RpQjOmBTLBY7XhSP_ti3PKj/view?usp=sharing",
+                "caption": "First Carousel Image"
+            },
+            {
+                "photoPath": "https://drive.google.com/file/d/1BqLMu98W0RpQjOmBTLBY7XhSP_ti3PKj/view?usp=drive_link",
+                "caption": "Second Carousel Image"
+            },
+            {
+                "photoPath": "https://drive.google.com/file/d/1BqLMu98W0RpQjOmBTLBY7XhSP_ti3PKj/view?usp=drive_link",
+                "caption": "Third Carousel Image"
+            }
+    ];
+    let photoData = [
+    {
+        "photoPath": "https://drive.google.com/file/d/1BqLMu98W0RpQjOmBTLBY7XhSP_ti3PKj/view?usp=sharing",
+        "caption": "Family Photo 1"
+    },
+    {
+        "photoPath": "https://drive.google.com/file/d/1BqLMu98W0RpQjOmBTLBY7XhSP_ti3PKj/view?usp=sharing",
+        "caption": "Family Photo 2"
+    },
+    // Add more photo objects as needed
+];
+    let currentCarouselSlide = 0;
+    let currentPhotoIndex = 0;
+    const photosPerLoad = 20;
+
+    // Load JSON data
+    async function loadJSON() {
+       
+
+        loadCarousel();
+        loadMorePhotos();
+    }
+
+    // Load carousel images
+    function loadCarousel() {
+        const carouselContainer = document.getElementById('carouselContainer');
+        carouselContainer.innerHTML = carouselData.map(item => `
+            <img src="${item.photoPath}" alt="${item.caption}" ondblclick="showPopup('${item.photoPath}', '${item.caption}')">
+        `).join('');
+    }
+
+    // Change carousel slide
+    function changeCarouselSlide(direction) {
+        const totalSlides = Math.ceil(carouselData.length / 2);
+        currentCarouselSlide = (currentCarouselSlide + direction + totalSlides) % totalSlides;
+        const offset = -currentCarouselSlide * 100;
+        document.getElementById('carouselContainer').style.transform = `translateX(${offset}%)`;
+    }
+
+    // Load more photos
+    function loadMorePhotos() {
+        const contentContainer = document.getElementById('contentContainer');
+        const photosToLoad = photoData.slice(currentPhotoIndex, currentPhotoIndex + photosPerLoad);
+        contentContainer.innerHTML += photosToLoad.map(item => `
+            <img src="${item.photoPath}" alt="${item.caption}" ondblclick="showPopup('${item.photoPath}', '${item.caption}')">
+        `).join('');
+        currentPhotoIndex += photosPerLoad;
+        if (currentPhotoIndex >= photoData.length) {
+            document.querySelector('.show-more').style.display = 'none';
+        }
+    }
+
+    // Show popup with image and caption
+    function showPopup(photoPath, caption) {
+        const popup = document.getElementById('popup');
+        const popupImage = document.getElementById('popupImage');
+        popupImage.src = photoPath;
+        popup.style.display = 'flex';
+        const utterance = new SpeechSynthesisUtterance(caption);
+        speechSynthesis.speak(utterance);
+        popup.onclick = function() {
+            popup.style.display = 'none';
+            speechSynthesis.cancel();
+        };
+    }
+
+    // Initialize
+    loadJSON();
+</script>
+
+</body>
+</html>
