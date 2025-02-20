@@ -70,12 +70,10 @@
 </head>
 <body>
  
-<header class="carousel">
-    <div class="carousel-container" id="carouselContainer">
-        <!-- Carousel images will be loaded here -->
-    </div>
-    <button class="prev" onclick="changeCarouselSlide(-1)">&#10094;</button>
-    <button class="next" onclick="changeCarouselSlide(1)">&#10095;</button>
+<header class="carousel" style="background-image: url('/family/img/ai22.jpg'); background-size: cover; position: relative;">
+    <img src="/family/img/allF.jpg" alt="Avatar" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 100px; height: 100px; border-radius: 50%;">
+    <h1 style="position: absolute; top: 10px; right: 10px; color: white;">Header Text</h1>
+
 </header>
 
 <div class="content">
@@ -484,7 +482,7 @@
     async function loadJSON() {
        
 
-        loadCarousel();
+       // loadCarousel();
         loadMorePhotos();
     }
 
